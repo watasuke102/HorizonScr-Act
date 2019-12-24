@@ -1,0 +1,59 @@
+#include "main.h"
+
+void _player::Init(int map[MAP_HEIGHT][MAP_WIDTH])
+{
+	for (auto i:step(MAP_HEIGHT))
+		for (auto j:step(MAP_WIDTH))
+			mapData[i][j] = map[i][j];
+	pos.set(460, 400);
+	didSpaceDown = false;
+	size.set(60, 60);
+	speed_y = 0;
+	speed_x = 0;
+	jumpCnt = 0;
+}
+void _player::Update()
+{
+	int sp;
+	//シフトキーでダッシュ
+	if (KeyShift.pressed())
+		sp = PLAYER_HIGHSPEED;
+	else sp = PLAYER_SPEED;
+	//左右
+	if (KeyLeft.pressed())
+		speed_x = -sp;
+	if (KeyRight.pressed())
+		speed_x = sp;
+	//ジャンプ
+	if (KeySpace.down())
+	{
+		if(jumpCnt < 2 && !didSpaceDown)
+			speed_y = 28;
+		didSpaceDown = true;
+	}else 
+	{
+		if (didSpaceDown)
+			jumpCnt++;
+		didSpaceDown = false;
+	}
+	Print << pos;
+	//横移動
+	pos.x += speed_x;
+	speed_x = 0;
+	//縦移動
+	pos.y -= speed_y;
+	speed_y--;
+
+	//移動制限
+	if (pos.y >= 900-size.y)
+	{
+		jumpCnt = 0;
+		pos.y = 900-size.y;
+		speed_y = 0;
+	}
+	pos.x = Clamp(pos.x, 0.0, (double)WINDOW_X - size.x);
+}
+void _player::Draw()
+{
+	Rect(pos.x,pos.y, size).draw(ColorF(0.3, 0.8, 0.4));
+}
