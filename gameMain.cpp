@@ -6,15 +6,11 @@ void _gameMain::Init()
 }
 void _gameMain::Update()
 {
-	player.Update(scr);
+	player.Update();
 	Draw();
 }
 void _gameMain::Draw()
 {
-	if (KeyLeft.pressed())
-		scr -= 5;
-	if(KeyRight.pressed())
-		scr += 5;
 	for (auto i : step(MAP_HEIGHT))
 	for (auto j : step(MAP_WIDTH))
 		if (mapData[i][j] != 0)
@@ -25,7 +21,7 @@ void _gameMain::Draw()
 				Triangle(leftTop.x, leftTop.y, MAP_CHIPSIZE).draw(ColorF(0.2, 0.6, 0.2));
 				continue;
 			}
-			Rect((j*MAP_CHIPSIZE)+scr, i * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
+			Rect((j*MAP_CHIPSIZE)+player.GetScr(), i * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
 				.draw(ColorF(0.6, 0.2, 0.2));
 		}
 

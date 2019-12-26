@@ -11,7 +11,7 @@ constexpr int PLAYER_SPEED     = 7;
 constexpr int PLAYER_HIGHSPEED = 11;
 
 constexpr int MAP_CHIPSIZE   = 60;
-constexpr int MAP_WIDTH      = 32;
+constexpr int MAP_WIDTH      = 41;
 constexpr int MAP_HEIGHT     = 18;
 
 namespace sceneName
