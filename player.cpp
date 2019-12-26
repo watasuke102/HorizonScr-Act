@@ -24,15 +24,38 @@ void _player::Update()
 	else sp = PLAYER_SPEED;
 	//左右
 	if (KeyLeft.pressed())
-		speed_x = -sp;
-	if (KeyRight.pressed())
-		speed_x = sp;
-	//ジャンプ
-	if (KeySpace.down())
 	{
+		//右に移動中だったら減速させる
+		if (speed_x > 0)
+			speed_x -= 2;
+		else speed_x = -sp;
+	}else if (KeyRight.pressed())
+	{
+		if (speed_x < 0)
+			speed_x += 2;
+		else speed_x = sp;
+	}else
+	{
+		if (speed_x < 0)speed_x += 1;
+		if (speed_x > 0)speed_x -= 1;
+	}
+	//ジャンプ
+	if (KeySpace.pressed())
+	{
+		//押された瞬間、すでに二弾ジャンプしていないなら
 		if (jumpCnt < 2 && !didSpaceDown)
-			speed_y = 28;
-		didSpaceDown = true;
+		{
+			speed_y = 0;
+			jumpSp = 0;
+			didSpaceDown = true;
+		}
+		//押され続けていたら
+		else
+		{
+			jumpSp += JUMP_POWER;
+			if ( jumpSp < (JUMP_POWER*7) )
+				speed_y += JUMP_POWER;
+		}
 	}
 	else
 	{
@@ -41,13 +64,14 @@ void _player::Update()
 		didSpaceDown = false;
 	}
 	Print << pos;
+	Print << speed_y;
 	//横移動
 	pos.x += speed_x;
 	//縦移動
 	pos.y -= speed_y;
 	speed_y--;
 	CheckMapHit();
-	speed_x = 0;
+	//speed_x = 0;
 
 	//移動制限
 	if (pos.y >= 900 - size.y)

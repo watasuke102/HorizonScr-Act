@@ -6,7 +6,7 @@ private:
 	Vec2 pos;
 	Size size;
 	bool didSpaceDown;
-	int speed_x, speed_y, jumpCnt;
+	int speed_x, speed_y, jumpCnt, jumpSp;
 	int scr;
 	int mapData[MAP_HEIGHT][MAP_WIDTH];
 	bool debug;

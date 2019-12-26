@@ -7,8 +7,9 @@ constexpr int WINDOW_X = 1920;
 constexpr int WINDOW_Y = 1080;
 constexpr Size WINDOW_SIZE(WINDOW_X,WINDOW_Y);
 
-constexpr int PLAYER_SPEED     = 7;
-constexpr int PLAYER_HIGHSPEED = 11;
+constexpr int PLAYER_SPEED     =  8;
+constexpr int PLAYER_HIGHSPEED = 12;
+constexpr int JUMP_POWER       =  5;
 
 constexpr int MAP_CHIPSIZE   = 60;
 constexpr int MAP_WIDTH      = 41;
