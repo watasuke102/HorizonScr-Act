@@ -9,15 +9,19 @@ public:
 	void Init(int i,int j){ map = Grid<int>(i, j, 0); }
 	int Width() { return map.width(); }
 	int Height() { return map.height(); }
-	void Set(int i, int j, int n)
+	void Set(int y, int x, int n)
 	{
-		//if ( (i<0||i>map.width()) || (j<0 || j>map.height()) )
-		//	return;
-		map[i][j] = n;
-		Print<<map[i][j]<<U"|"<<n;
+		if ( (y<0||y>map.width()) || (x<0 || x>map.height()) )
+			return;
+		map[y][x] = n;
+		Print<<map[y][x]<<U"|"<<n;
 	}
-	 int Get(int i, int j) { return map[i][j]; }
-	 int* operator[](int i) { return map[i]; }
+	int Get(int y, int x)
+	{
+		if ( (y<0||y>map.width()) || (x<0 || x>map.height()) )
+			return 0;
+		return map[y][x];
+	}
 };
 class _player
 {

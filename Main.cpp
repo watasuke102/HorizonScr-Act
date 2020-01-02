@@ -2,7 +2,7 @@
 
 void Main()
 {
-	Graphics::SetTargetFrameRateHz(56);
+	//Graphics::SetTargetFrameRateHz(58);
 	double resize = 0.8;
 	Window::SetStyle(WindowStyle::Sizable);
 	Window::Resize(WINDOW_X * resize, WINDOW_Y * resize);

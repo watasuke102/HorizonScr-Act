@@ -37,7 +37,7 @@ void _gameMain::Draw()
 {
 	for (auto y : step(mapData.Height()))
 	for (auto x : step(mapData.Width()))
-		if (mapData[y][x] != 0)
+		if (mapData.Get(y,x) != 0)
 		{
 			//if (mapData[y][x] == 2)
 			//{
@@ -45,7 +45,7 @@ void _gameMain::Draw()
 			//	Triangle(leftTop.x, leftTop.y, MAP_CHIPSIZE).draw(ColorF(0.2, 0.6, 0.2));
 			//	continue;
 			//}
-			Rect((x*MAP_CHIPSIZE)+scr, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
+			Rect((x*MAP_CHIPSIZE)+player.GetScr(), y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
 				.draw(ColorF(0.6, 0.2, 0.2));
 		}
 

@@ -6,6 +6,7 @@ void _player::Init()
 	pos.set(460, 400);
 	didSpaceDown = false;
 	size.set(60, 60);
+	scr = 0;
 	speed_y = 0;
 	speed_x = 0;
 	jumpCnt = 0;
@@ -68,14 +69,10 @@ void _player::Update(_mapData* map)
 	pos.y -= speed_y;
 	speed_y--;
 	CheckMapHit(map);
-	//speed_x = 0;
 
-	//ˆÚ“®§ŒÀ
-	if (pos.y >= 900 - size.y)
+	if (pos.y >= WINDOW_Y)
 	{
-		jumpCnt = 0;
-		pos.y = 900 - size.y;
-		speed_y = 0;
+		Init();
 	}
 	pos.x = Clamp(pos.x, 0.0, (double)WINDOW_X - size.x);
 }
