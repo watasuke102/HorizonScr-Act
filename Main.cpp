@@ -2,7 +2,7 @@
 
 void Main()
 {
-	//Graphics::SetTargetFrameRateHz(58);
+	Graphics::SetTargetFrameRateHz(56);
 	double resize = 0.8;
 	Window::SetStyle(WindowStyle::Sizable);
 	Window::Resize(WINDOW_X * resize, WINDOW_Y * resize);
@@ -10,9 +10,11 @@ void Main()
 	Window::Maximize();
 
 	_sceneManager scene;
+	_fpsManager fpsManager;
 	while (System::Update())
 	{
 		ClearPrint();
 		scene.Update();
+		fpsManager.Update();
 	}
 }

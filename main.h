@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Siv3D.hpp>
+#include <time.h>
 #define GL __declspec(selectany)
 
 constexpr int WINDOW_X = 1920;
