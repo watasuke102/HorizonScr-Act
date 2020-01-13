@@ -10,11 +10,9 @@ constexpr Size WINDOW_SIZE(WINDOW_X,WINDOW_Y);
 
 constexpr int PLAYER_SPEED     =  8;
 constexpr int PLAYER_HIGHSPEED = 12;
-constexpr int JUMP_POWER       =  5;
+constexpr int JUMP_POWER       =  15;
 
 constexpr int MAP_CHIPSIZE   = 60;
-//constexpr int MAP_WIDTH      = 41;
-//constexpr int MAP_HEIGHT     = 18;
 
 namespace sceneName
 {

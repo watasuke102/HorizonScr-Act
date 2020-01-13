@@ -4,7 +4,6 @@ void _gameMain::Init()
 {
 	const CSVData csv(U"Data/map.csv");
 	mapData.Init(csv.columns(0), csv.rows());
-	//mapData.Init(50,50);
 	for (auto y : step(mapData.Height()))
 	for (auto x : step(mapData.Width()))
 	{
@@ -14,7 +13,6 @@ void _gameMain::Init()
 
 	player.Init();
 	String dev,out;
-	//Height18:Width50
 	for (auto y : step(mapData.Height()))
 	{
 		dev.clear();
@@ -28,7 +26,9 @@ void _gameMain::Init()
 }
 void _gameMain::Update()
 {
+	if (KeyF5.down()) Init();
 	Print << U"W{}, H{}"_fmt(mapData.Width(), mapData.Height());
+	Print << mapData.Sizeget();
 	player.Update(&mapData);
 	Draw();
 }
@@ -37,17 +37,23 @@ void _gameMain::Draw()
 {
 	for (auto y : step(mapData.Height()))
 	for (auto x : step(mapData.Width()))
-		if (mapData.Get(y,x) != 0)
+	{
+		int map = mapData.Get(y, x);
+		if (map != 0)
 		{
-			//if (mapData[y][x] == 2)
-			//{
-			//	Vec2 leftTop(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE);
-			//	Triangle(leftTop.x, leftTop.y, MAP_CHIPSIZE).draw(ColorF(0.2, 0.6, 0.2));
-			//	continue;
-			//}
+			/*
+			if (map == 2)
+			{
+				Vec2 leftTop(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE);
+				Triangle(leftTop.x, leftTop.y, MAP_CHIPSIZE).draw(ColorF(0.2, 0.6, 0.2));
+				continue;
+			}
+			*/
+			HSV col(map * (360 / 9),0.5);
 			Rect((x*MAP_CHIPSIZE)+player.GetScr(), y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-				.draw(ColorF(0.6, 0.2, 0.2));
+				.draw(col);//(ColorF(0.6, 0.2, 0.2));
 		}
+	}
 
 	player.Draw();
 }

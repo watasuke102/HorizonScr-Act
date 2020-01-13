@@ -3,7 +3,7 @@
 void _player::Init()
 {
 	debug = false;
-	pos.set(460, 400);
+	pos.set(480, 400);
 	didSpaceDown = false;
 	size.set(60, 60);
 	scr = 0;
@@ -21,22 +21,31 @@ void _player::Update(_mapData* map)
 		sp = PLAYER_HIGHSPEED;
 	else sp = PLAYER_SPEED;
 	//左右
+	/*
 	if (KeyLeft.pressed())
 	{
 		//右に移動中だったら減速させる
 		if (speed_x > 0)
-			speed_x -= 2;
+			speed_x -= 4;
 		else speed_x = -sp;
-	}else if (KeyRight.pressed())
+	}
+	else if (KeyRight.pressed())
 	{
 		if (speed_x < 0)
-			speed_x += 2;
+			speed_x += 4;
 		else speed_x = sp;
-	}else
+	}
+	else
 	{
 		if (speed_x < 0)speed_x += 1;
 		if (speed_x > 0)speed_x -= 1;
 	}
+	*/
+	//左右
+	if (KeyLeft.pressed())
+		speed_x = -sp;
+	if (KeyRight.pressed())
+		speed_x = sp;
 	//ジャンプ
 	if (KeySpace.pressed())
 	{
@@ -44,15 +53,23 @@ void _player::Update(_mapData* map)
 		if (jumpCnt < 2 && !didSpaceDown)
 		{
 			speed_y = 0;
-			jumpSp = 0;
+			spacePressedFrame = 0;
 			didSpaceDown = true;
 		}
 		//押され続けていたら
+		/*
 		else
 		{
 			jumpSp += JUMP_POWER;
 			if ( jumpSp < (JUMP_POWER*7) )
 				speed_y += JUMP_POWER;
+		}
+		*/
+		else
+		{
+			spacePressedFrame++;
+			if (spacePressedFrame < 13)
+				speed_y = JUMP_POWER;
 		}
 	}
 	else
@@ -69,7 +86,7 @@ void _player::Update(_mapData* map)
 	pos.y -= speed_y;
 	speed_y--;
 	CheckMapHit(map);
-
+	speed_x = 0;
 	if (pos.y >= WINDOW_Y)
 	{
 		Init();
