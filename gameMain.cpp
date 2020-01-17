@@ -1,4 +1,4 @@
-#include "main.h"
+﻿#include "main.h"
 
 void _gameMain::Init()
 {
@@ -12,6 +12,7 @@ void _gameMain::Init()
 	}
 
 	player.Init();
+
 	String dev,out;
 	for (auto y : step(mapData.Height()))
 	{
@@ -23,18 +24,28 @@ void _gameMain::Init()
 	TextWriter t(U"CSV.txt");
 	t.writeln(out);
 	t.close();
+
+	MapDraw();
 }
 void _gameMain::Update()
 {
 	if (KeyF5.down()) Init();
-	Print << U"W{}, H{}"_fmt(mapData.Width(), mapData.Height());
-	Print << mapData.Sizeget();
 	player.Update(&mapData);
 	Draw();
 }
 /**/
 void _gameMain::Draw()
 {
+	Print << player.GetScr();
+	map.draw(player.GetScr(), 0);
+	player.Draw();
+}
+void _gameMain::MapDraw()
+{
+	Size mapSize(mapData.Width() * MAP_CHIPSIZE, mapData.Height() * MAP_CHIPSIZE);
+	//map.resized(mapSize);
+	map = RenderTexture(mapSize,ColorF(0.1));
+	ScopedRenderTarget2D target(map);
 	for (auto y : step(mapData.Height()))
 	for (auto x : step(mapData.Width()))
 	{
@@ -49,13 +60,11 @@ void _gameMain::Draw()
 				continue;
 			}
 			*/
-			HSV col(map * (360 / 9),0.5);
-			Rect((x*MAP_CHIPSIZE)+player.GetScr(), y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
+			HSV col(map * (360/9), 0.5);
+			Rect((x*MAP_CHIPSIZE), y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
 				.draw(col);//(ColorF(0.6, 0.2, 0.2));
 		}
 	}
-
-	player.Draw();
 }
 /*/
 void _gameMain::Draw()

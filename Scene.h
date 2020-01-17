@@ -3,12 +3,14 @@
 class _gameMain
 {
 private:
-	int scr;
 	_player player;
 	_mapData mapData;
+	RenderTexture map;
 public:
 	_gameMain() { Init(); }
 	void Init();
 	void Update();
 	void Draw();
+
+	void MapDraw();
 };

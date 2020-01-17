@@ -2,6 +2,7 @@
 
 void Main()
 {
+	
 	double resize = 0.8;
 	Scene::SetBackground(ColorF(0.1));
 	Graphics::SetTargetFrameRateHz(60);

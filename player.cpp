@@ -21,27 +21,6 @@ void _player::Update(_mapData* map)
 		sp = PLAYER_HIGHSPEED;
 	else sp = PLAYER_SPEED;
 	//左右
-	/*
-	if (KeyLeft.pressed())
-	{
-		//右に移動中だったら減速させる
-		if (speed_x > 0)
-			speed_x -= 4;
-		else speed_x = -sp;
-	}
-	else if (KeyRight.pressed())
-	{
-		if (speed_x < 0)
-			speed_x += 4;
-		else speed_x = sp;
-	}
-	else
-	{
-		if (speed_x < 0)speed_x += 1;
-		if (speed_x > 0)speed_x -= 1;
-	}
-	*/
-	//左右
 	if (KeyLeft.pressed())
 		speed_x = -sp;
 	if (KeyRight.pressed())
@@ -57,14 +36,6 @@ void _player::Update(_mapData* map)
 			didSpaceDown = true;
 		}
 		//押され続けていたら
-		/*
-		else
-		{
-			jumpSp += JUMP_POWER;
-			if ( jumpSp < (JUMP_POWER*7) )
-				speed_y += JUMP_POWER;
-		}
-		*/
 		else
 		{
 			spacePressedFrame++;
@@ -241,7 +212,7 @@ void _player::CheckMapHit(_mapData* mapData)
 	}
 
 	//当たり判定
-		
+
 	if (hit.top || hit.bottom)
 		speed_y = 0;
 	if (hit.left || hit.right)
@@ -251,156 +222,5 @@ void _player::CheckMapHit(_mapData* mapData)
 	hit.pos.x += scr;
 	pos = hit.pos;
 	scr -= speed_x;
+	//if (scr  0) scr = 0;
 }
-/*
-void _player::CheckMapHit(_mapData* mapData)
-{
-	int x, y;
-	//プレイヤーの衝突位置と次移動すべき位置
-	struct _hit
-	{
-		bool top, bottom, left, right;
-		Vec2 pos;
-	}hit;
-	hit.top = false;
-	hit.bottom = false;
-	hit.left = false;
-	hit.right = false;
-	hit.pos = pos;
-	hit.pos.x -= scr;
-	//横方向の当たり判定
-	{
-		//左に移動中だったら左の当たり判定
-		if (speed_x < 0)
-		{
-			x = hit.pos.x / MAP_CHIPSIZE;
-			y = (hit.pos.y + (size.y / 2)) / MAP_CHIPSIZE;
-			if (debug)
-				Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-				.draw(Palette::Hotpink);
-			if (mapData->Get(y,x) != 0 && hit.pos != Vec2(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE))
-			{
-				hit.right = true;
-				hit.pos.x = (x * MAP_CHIPSIZE) + MAP_CHIPSIZE;
-			}
-		}
-		//右に移動中だったら右の当たり判定
-		if (speed_x > 0)
-		{
-			x = (hit.pos.x + size.x) / MAP_CHIPSIZE;
-			y = (hit.pos.y + (size.y / 5)) / MAP_CHIPSIZE;
-			if (debug)
-				Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-				.draw(Palette::Aquamarine);
-			if (mapData->Get(y,x) != 0 && hit.pos != Vec2(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE))
-			{
-				hit.left = true;
-				hit.pos.x = (x * MAP_CHIPSIZE) - size.x;
-			}
-		}
-	}
-	//縦方向の当たり判定
-	{
-		//下：落下中だったら下の当たり判定
-		if (speed_y < 0)
-		{
-			//マップチップの境目にいないなら
-			if ((int)hit.pos.x % MAP_CHIPSIZE == 0)
-			{
-				//真下
-				x = (hit.pos.x + (size.x / 2)) / MAP_CHIPSIZE;
-				y = (hit.pos.y + size.y) / MAP_CHIPSIZE;
-				if (debug)
-					Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-					.draw(Palette::Yellow);
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.bottom = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - size.y;
-				}
-			}
-			else
-			{
-				//左下
-				x = (hit.pos.x + size.x) / MAP_CHIPSIZE;
-				y = (hit.pos.y + size.y) / MAP_CHIPSIZE;
-				if (debug)
-					Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-					.draw(Palette::Yellow);
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.bottom = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - size.y;
-				}
-				//右下
-				x = hit.pos.x / MAP_CHIPSIZE;
-				y = (hit.pos.y + size.y) / MAP_CHIPSIZE;
-				if (debug)
-					Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-					.draw(Palette::Yellow);
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.bottom = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - size.y;
-				}
-			}
-		}
-		//上：上昇中だったら上の当たり判定
-
-		if (speed_y > 0)
-		{
-			//マップチップの境目にいないなら
-			if ((int)hit.pos.x % MAP_CHIPSIZE == 0)
-			{
-				//真下
-				x = (hit.pos.x + (size.x / 2)) / MAP_CHIPSIZE;
-				y = hit.pos.y / MAP_CHIPSIZE;
-				if (debug)
-					Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-					.draw(Palette::Purple);
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.top = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - size.y;
-				}
-			}
-			else
-			{
-				//左上
-				x = (hit.pos.x + size.x) / MAP_CHIPSIZE;
-				y = hit.pos.y / MAP_CHIPSIZE;
-				if (debug)
-					Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-					.draw(Palette::Purple);
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.top = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) + MAP_CHIPSIZE;
-				}
-				//右上
-				x = hit.pos.x / MAP_CHIPSIZE;
-				y = hit.pos.y / MAP_CHIPSIZE;
-				if (debug)
-					Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-					.draw(Palette::Purple);
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.top = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) + MAP_CHIPSIZE;
-				}
-			}
-		}
-	}
-
-	//当たり判定
-		
-	if (hit.top || hit.bottom)
-		speed_y = 0;
-	if (hit.left || hit.right)
-		speed_x = 0;
-	if (hit.bottom)
-		jumpCnt = 0;
-	hit.pos.x += scr;
-	pos = hit.pos;
-	scr -= speed_x;
-}*/
