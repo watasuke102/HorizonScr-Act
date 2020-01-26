@@ -222,5 +222,5 @@ void _player::CheckMapHit(_mapData* mapData)
 	hit.pos.x += scr;
 	pos = hit.pos;
 	scr -= speed_x;
-	//if (scr  0) scr = 0;
+	if (scr > 0) scr = 0;
 }

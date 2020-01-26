@@ -13,14 +13,14 @@ public:
 	int Sizeget() { return map.size_bytes(); }
 	void Set(int y, int x, int n)
 	{
-		if ( (y<0||y>map.width()) || (x<0 || x>map.height()) )
+		if (y<0 || y>map.height() || x<0 || x>map.width())
 			return;
 		map[y][x] = n;
 		Print<<map[y][x]<<U"|"<<n;
 	}
 	int Get(int y, int x)
 	{
-		if ( (y<0||y>map.width()) || (x<0 || x>map.height()) )
+		if ( (y<0||y>map.height()) || (x<0 || x>map.width()) )
 			return 0;
 		return map[y][x];
 	}

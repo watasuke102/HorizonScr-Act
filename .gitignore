@@ -1,0 +1,6 @@
+.vscode/
+.vs/
+Intermediate/
+App/
+!/App/Data/
+!/App/*.exe

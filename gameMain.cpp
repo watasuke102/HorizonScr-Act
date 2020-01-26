@@ -3,7 +3,9 @@
 void _gameMain::Init()
 {
 	const CSVData csv(U"Data/map.csv");
-	mapData.Init(csv.columns(0), csv.rows());
+	double height = csv.columns(0);
+	double wight  = csv.rows();
+	mapData.Init(height, wight);
 	for (auto y : step(mapData.Height()))
 	for (auto x : step(mapData.Width()))
 	{
