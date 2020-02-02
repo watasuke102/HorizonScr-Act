@@ -29,17 +29,25 @@ public:
 class _player
 {
 private:
-	Vec2 pos;
+	Vec2 pos, speed;
 	Size size;
 	RenderTexture debugtxr;
 	bool didSpaceDown;
-	int speed_x, speed_y, jumpCnt, spacePressedFrame;
+	int jumpCnt, spacePressedFrame;
 	int scr;
+	//ƒ_ƒbƒVƒ…
+	Effect afterImage;
+	bool dashing;
+
 	bool debug;
 public:
 	void Init();
 	void Update(_mapData*);
 	void Draw();
+
+	void Dash();
+	void Jump();
+	void Move(_mapData*);
 	void CheckMapHit(_mapData*);
 	int GetScr() { return scr; }
 };
