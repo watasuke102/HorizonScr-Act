@@ -16,7 +16,6 @@ public:
 		if (y<0 || y>map.height() || x<0 || x>map.width())
 			return;
 		map[y][x] = n;
-		Print<<map[y][x]<<U"|"<<n;
 	}
 	int Get(int y, int x)
 	{
@@ -32,6 +31,7 @@ class _player
 private:
 	Vec2 pos;
 	Size size;
+	RenderTexture debugtxr;
 	bool didSpaceDown;
 	int speed_x, speed_y, jumpCnt, spacePressedFrame;
 	int scr;

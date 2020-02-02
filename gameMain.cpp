@@ -31,14 +31,18 @@ void _gameMain::Init()
 }
 void _gameMain::Update()
 {
+	static bool stp = false;
 	if (KeyF5.down()) Init();
-	player.Update(&mapData);
+	if(!stp)
+		player.Update(&mapData);
+	if(KeyM.down())
+		stp = !stp;
 	Draw();
 }
-/**/
+
 void _gameMain::Draw()
 {
-	Print << player.GetScr();
+	Print << U"scr({})"_fmt(player.GetScr());
 	map.draw(player.GetScr(), 0);
 	player.Draw();
 }
@@ -54,37 +58,9 @@ void _gameMain::MapDraw()
 		int map = mapData.Get(y, x);
 		if (map != 0)
 		{
-			/*
-			if (map == 2)
-			{
-				Vec2 leftTop(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE);
-				Triangle(leftTop.x, leftTop.y, MAP_CHIPSIZE).draw(ColorF(0.2, 0.6, 0.2));
-				continue;
-			}
-			*/
 			HSV col(map * (360/9), 0.5);
 			Rect((x*MAP_CHIPSIZE), y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
 				.draw(col);//(ColorF(0.6, 0.2, 0.2));
 		}
 	}
 }
-/*/
-void _gameMain::Draw()
-{
-	for (auto j : step(mapData.Height()))
-	for (auto i : step(mapData.Width()))
-		if (mapData.Get(j,i) != 0)
-		{
-			if (mapData.Get(j,i) == 2)
-			{
-				Vec2 leftTop(j * MAP_CHIPSIZE, i * MAP_CHIPSIZE);
-				Triangle(leftTop.x, leftTop.y, MAP_CHIPSIZE).draw(ColorF(0.2, 0.6, 0.2));
-				continue;
-			}
-			Rect((j*MAP_CHIPSIZE)+player.GetScr(), i * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-				.draw(ColorF(0.6, 0.2, 0.2));
-		}
-
-	player.Draw();
-}
-/**/
