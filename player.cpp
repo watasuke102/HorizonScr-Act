@@ -1,4 +1,4 @@
-#include "main.h"
+ï»¿#include "main.h"
 
 void _player::Init()
 {
@@ -11,13 +11,18 @@ void _player::Init()
 	speed.y = 0;
 	speed.x = 0;
 	jumpCnt = 0;
+
+	afterImage.clear();
+	dashingTime.reset();
+	dashing = false;
+	dashSp = 0;
 }
 
 void _player::Update(_mapData* map)
 {
 	//debug
 	static int upsp;
-	if (KeyD.down())debug = !debug;
+	if (KeyD.down() && KeyAlt.down())debug = !debug;
 	if(KeyUp.pressed())
 		speed.y = (KeyShift.pressed())? 2:1;
 	Jump();
@@ -28,22 +33,44 @@ void _player::Draw()
 {
 	debugtxr.draw(AlphaF(0.5));
 	debugtxr.clear(ColorF(0.1,0.5));
+	afterImage.update();
 	Rect(pos.x, pos.y, size).draw(ColorF(0.3, 0.8, 0.4, 0.5));
 }
 
 void _player::Dash()
 {
-	if(KeyD.down())
-		dashing = true;
-	if(KeyA.down())
-		dashing = false;
+	if(dashing)
+	{
+		speed.set(15*dashSp, 0);
+		afterImage.add([p = pos, ef_size = size](double t) {
+			Point ef_pos((int)p.x, (int)p.y);
+			Rect(ef_pos, ef_size).draw(ColorF(0.3, 0.8, 0.4, 1.0 - t/0.3));
+			return t < 0.3;
+		});
+		if(dashingTime > 0.5s)
+		{
+			dashing = false;
+			dashSp = 0;
+			dashingTime.reset();
+		}
+	}
+	else
+	{
+		if(KeyD.down()) dashSp = 1;
+		if(KeyA.down())	dashSp = -1;
+		if(dashSp!=0)
+		{
+			dashing = true;
+			dashingTime.restart();
+		}
+	}
 }
 void _player::Jump()
 {
 	Print << U"{}(JumpCnt)"_fmt(jumpCnt);
 	if (KeySpace.pressed())
 	{
-		//‚·‚Å‚É“ñ’eƒWƒƒƒ“ƒv‚µ‚Ä‚¢‚È‚¢A‚©‚Â‰Ÿ‚³‚ê‚½uŠÔ‚È‚ç
+		//ã™ã§ã«äºŒå¼¾ã‚¸ãƒ£ãƒ³ãƒ—ã—ã¦ã„ãªã„ã€ã‹ã¤æŠ¼ã•ã‚ŒãŸç¬é–“ãªã‚‰
 		if (!didSpaceDown)
 		{
 			if(jumpCnt < 2)
@@ -52,7 +79,7 @@ void _player::Jump()
 				spacePressedFrame = 0;
 				didSpaceDown = true;
 			}
-		}else //‰Ÿ‚³‚ê‘±‚¯‚Ä‚¢‚½‚ç
+		}else //æŠ¼ã•ã‚Œç¶šã‘ã¦ã„ãŸã‚‰
 		{
 			spacePressedFrame++;
 			if (spacePressedFrame < 13)
@@ -70,18 +97,21 @@ void _player::Jump()
 void _player::Move(_mapData* map)
 {
 	int sp;
-	//ƒVƒtƒgƒL[‚Å‘¬“xƒAƒbƒv
+	//ã‚·ãƒ•ãƒˆã‚­ãƒ¼ã§é€Ÿåº¦ã‚¢ãƒƒãƒ—
 	if (KeyShift.pressed())
 		sp = PLAYER_HIGHSPEED;
 	else sp = PLAYER_SPEED;
-	//¶‰EˆÚ“®
-	if (KeyLeft.pressed())  speed.x = -sp;
-	if (KeyRight.pressed()) speed.x =  sp;
+	//å·¦å³ç§»å‹•
+	if(!dashing)
+	{
+		if (KeyLeft.pressed())  speed.x = -sp;
+		if (KeyRight.pressed()) speed.x =  sp;
+	}
 	Print << U"pos:" << pos;
 	Print << U"sp_y({})"_fmt(speed.y);
-	//‰¡ˆÚ“®
+	//æ¨ªç§»å‹•
 	pos.x += speed.x;
-	//cˆÚ“®
+	//ç¸¦ç§»å‹•
 	pos.y -= speed.y;
 	speed.y--;
 	CheckMapHit(map);
@@ -89,14 +119,14 @@ void _player::Move(_mapData* map)
 	if (pos.y >= WINDOW_Y) Init();
 	pos.x = Clamp(pos.x, 0.0, (double)WINDOW_X - size.x);
 }
-//¶@Hotpink
-//‰E@Aquamarine
-//ã@Purple
-//‰º@Yellow
+//å·¦ã€€Hotpink
+//å³ã€€Aquamarine
+//ä¸Šã€€Purple
+//ä¸‹ã€€Yellow
 void _player::CheckMapHit(_mapData* mapData)
 {
 	int x, y;
-	//ƒvƒŒƒCƒ„[‚ÌÕ“ËˆÊ’u‚ÆŸˆÚ“®‚·‚×‚«ˆÊ’u
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¡çªä½ç½®ã¨æ¬¡ç§»å‹•ã™ã¹ãä½ç½®
 	struct _hit
 	{
 		bool top, bottom, left, right;
@@ -108,9 +138,9 @@ void _player::CheckMapHit(_mapData* mapData)
 	hit.right = false;
 	hit.pos = pos;
 	hit.pos.x -= scr;
-	//‰¡•ûŒü‚Ì“–‚½‚è”»’è
+	//æ¨ªæ–¹å‘ã®å½“ãŸã‚Šåˆ¤å®š
 	{
-		//¶‚ÉˆÚ“®’†‚¾‚Á‚½‚ç¶‚Ì“–‚½‚è”»’è
+		//å·¦ã«ç§»å‹•ä¸­ã ã£ãŸã‚‰å·¦ã®å½“ãŸã‚Šåˆ¤å®š
 		if (speed.x < 0)
 		{
 			x = hit.pos.x / MAP_CHIPSIZE;
@@ -127,7 +157,7 @@ void _player::CheckMapHit(_mapData* mapData)
 				hit.pos.x = (x * MAP_CHIPSIZE) + MAP_CHIPSIZE;
 			}
 		}
-		//‰E‚ÉˆÚ“®’†‚¾‚Á‚½‚ç‰E‚Ì“–‚½‚è”»’è
+		//å³ã«ç§»å‹•ä¸­ã ã£ãŸã‚‰å³ã®å½“ãŸã‚Šåˆ¤å®š
 		if (speed.x > 0)
 		{
 			x = (hit.pos.x + size.x) / MAP_CHIPSIZE;
@@ -145,15 +175,16 @@ void _player::CheckMapHit(_mapData* mapData)
 			}
 		}
 	}
-	//c•ûŒü‚Ì“–‚½‚è”»’è
+	//ç¸¦æ–¹å‘ã®å½“ãŸã‚Šåˆ¤å®š
 	{
-		//ãFã¸’†‚¾‚Á‚½‚çã‚Ì“–‚½‚è”»’è
+		//ä¸Šï¼šä¸Šæ˜‡ä¸­ã ã£ãŸã‚‰ä¸Šã®å½“ãŸã‚Šåˆ¤å®š
 		if (speed.y > 0)
 		{
-			//ƒ}ƒbƒvƒ`ƒbƒv‚Ì‹«–Ú‚É‚¢‚È‚¢‚È‚ç
+			//FIXME:speed.y>1ã®ã¨ãã«ä¸Šæ–¹å‘ã«ã™ã‚ŠæŠœã‘ã‚‹
+			//ãƒãƒƒãƒ—ãƒãƒƒãƒ—ã®å¢ƒç›®ã«ã„ãªã„ãªã‚‰
 			if ((int)hit.pos.x % MAP_CHIPSIZE == 0)
 			{
-				//^‰º
+				//çœŸä¸‹
 				x = (hit.pos.x + (size.x / 2)) / MAP_CHIPSIZE;
 				y = hit.pos.y / MAP_CHIPSIZE;
 				{
@@ -170,7 +201,7 @@ void _player::CheckMapHit(_mapData* mapData)
 			}
 			else
 			{
-				//¶ã
+				//å·¦ä¸Š
 				x = (hit.pos.x + size.x) / MAP_CHIPSIZE;
 				y = hit.pos.y / MAP_CHIPSIZE;
 				{
@@ -184,7 +215,7 @@ void _player::CheckMapHit(_mapData* mapData)
 					hit.top = true;
 					hit.pos.y = (y * MAP_CHIPSIZE) + MAP_CHIPSIZE;
 				}
-				//‰Eã
+				//å³ä¸Š
 				x = hit.pos.x / MAP_CHIPSIZE;
 				y = hit.pos.y / MAP_CHIPSIZE;
 				{
@@ -200,13 +231,13 @@ void _player::CheckMapHit(_mapData* mapData)
 				}
 			}
 		}
-		//‰ºF—‰º’†‚¾‚Á‚½‚ç‰º‚Ì“–‚½‚è”»’è
+		//ä¸‹ï¼šè½ä¸‹ä¸­ã ã£ãŸã‚‰ä¸‹ã®å½“ãŸã‚Šåˆ¤å®š
 		if (speed.y < 0)
 		{
-			//ƒ}ƒbƒvƒ`ƒbƒv‚Ì‹«–Ú‚É‚¢‚È‚¢‚È‚ç
+			//ãƒãƒƒãƒ—ãƒãƒƒãƒ—ã®å¢ƒç›®ã«ã„ãªã„ãªã‚‰
 			if ((int)hit.pos.x % MAP_CHIPSIZE == 0)
 			{
-				//^‰º
+				//çœŸä¸‹
 				x = (hit.pos.x + (size.x / 2)) / MAP_CHIPSIZE;
 				y = (hit.pos.y + size.y) / MAP_CHIPSIZE;
 				{
@@ -223,7 +254,7 @@ void _player::CheckMapHit(_mapData* mapData)
 			}
 			else
 			{
-				//¶‰º
+				//å·¦ä¸‹
 				x = (hit.pos.x + size.x) / MAP_CHIPSIZE;
 				y = (hit.pos.y + size.y) / MAP_CHIPSIZE;
 				{
@@ -237,7 +268,7 @@ void _player::CheckMapHit(_mapData* mapData)
 					hit.bottom = true;
 					hit.pos.y = (y * MAP_CHIPSIZE) - size.y;
 				}
-				//‰E‰º
+				//å³ä¸‹
 				x = hit.pos.x / MAP_CHIPSIZE;
 				y = (hit.pos.y + size.y) / MAP_CHIPSIZE;
 				{
@@ -255,12 +286,15 @@ void _player::CheckMapHit(_mapData* mapData)
 		}
 	}
 
-	//“–‚½‚è”»’è
+	//å½“ãŸã‚Šåˆ¤å®š
 
 	if (hit.top || hit.bottom)
 		speed.y = 0;
 	if (hit.left || hit.right)
+	{
 		speed.x = 0;
+		dashingTime.set(2s);//1.5sä»¥ä¸Šã«ã—ã¦æ¬¡ã®updateã§ãƒ€ãƒƒã‚·ãƒ¥çµ‚äº†
+	}
 	if (hit.bottom)
 		jumpCnt = 0;
 	hit.pos.x += scr;

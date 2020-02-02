@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 
-//ƒ}ƒbƒv‚Ìƒf[ƒ^ŠÇ—
+//ãƒãƒƒãƒ—ã®ãƒ‡ãƒ¼ã‚¿ç®¡ç†
 class _mapData
 {
 private:
@@ -25,7 +25,7 @@ public:
 	}
 };
 
-//ƒvƒŒƒCƒ„[
+//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 class _player
 {
 private:
@@ -35,8 +35,10 @@ private:
 	bool didSpaceDown;
 	int jumpCnt, spacePressedFrame;
 	int scr;
-	//ƒ_ƒbƒVƒ…
+	//ãƒ€ãƒƒã‚·ãƒ¥
 	Effect afterImage;
+	Stopwatch dashingTime;
+	int dashSp; //1â†’å³ã€-1â†’å·¦
 	bool dashing;
 
 	bool debug;
