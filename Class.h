@@ -29,6 +29,7 @@ public:
 class _player
 {
 private:
+	Texture pic;
 	Vec2 pos, speed;
 	Size size;
 	RenderTexture debugtxr;
@@ -37,7 +38,7 @@ private:
 	int scr;
 	//ダッシュ
 	Effect afterImage;
-	Stopwatch dashingTime;
+	int dashingTime;
 	int dashSp; //1→右、-1→左
 	bool dashing;
 
@@ -52,4 +53,14 @@ public:
 	void Move(_mapData*);
 	void CheckMapHit(_mapData*);
 	int GetScr() { return scr; }
+};
+
+class enemy
+{
+private:
+	Vec2 pos;
+public:
+	void Init();
+	void Update();
+	void Draw();
 };

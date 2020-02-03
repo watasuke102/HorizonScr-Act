@@ -2,18 +2,19 @@
 
 void _player::Init()
 {
+	pos.set(480, 400);
+	size.set(60, 60);
+	pic = Texture(Emoji(U"😇"));
 	debugtxr = RenderTexture(WINDOW_SIZE,ColorF(0.1));
 	debug = false;
-	pos.set(480, 400);
 	didSpaceDown = false;
-	size.set(60, 60);
 	scr = 0;
 	speed.y = 0;
 	speed.x = 0;
 	jumpCnt = 0;
 
 	afterImage.clear();
-	dashingTime.reset();
+	dashingTime = 0;
 	dashing = false;
 	dashSp = 0;
 }
@@ -31,29 +32,34 @@ void _player::Update(_mapData* map)
 }
 void _player::Draw()
 {
-	debugtxr.draw(AlphaF(0.5));
+	//debugtxr.draw(AlphaF(0.5));
 	debugtxr.clear(ColorF(0.1,0.5));
 	afterImage.update();
-	Rect(pos.x, pos.y, size).draw(ColorF(0.3, 0.8, 0.4, 0.5));
+	//Rect(pos.x, pos.y, size)
+	pic.resized(size).draw(pos);//,ColorF(0.3, 0.8, 0.4, 0.5));
 }
 
 void _player::Dash()
 {
+	//ダッシュ中なら更新する
 	if(dashing)
 	{
-		speed.set(15*dashSp, 0);
-		afterImage.add([p = pos, ef_size = size](double t) {
+		speed.set(20*dashSp, 0);
+		afterImage.add([ef_tex=pic, p = pos, ef_size = size](double t) {
 			Point ef_pos((int)p.x, (int)p.y);
-			Rect(ef_pos, ef_size).draw(ColorF(0.3, 0.8, 0.4, 1.0 - t/0.3));
-			return t < 0.3;
+			//Rect(ef_pos, ef_size)
+			ef_tex.resized(ef_size).draw(ef_pos, AlphaF(0.5 - t/0.3));//ColorF(0.3, 0.8, 0.4, 0.5 - t/0.3));
+			return t < 0.5;
 		});
-		if(dashingTime > 0.5s)
+		dashingTime++;
+		if(dashingTime > 18)
 		{
 			dashing = false;
 			dashSp = 0;
-			dashingTime.reset();
+			dashingTime = 0;
 		}
 	}
+	//ダッシュしてなかったら
 	else
 	{
 		if(KeyD.down()) dashSp = 1;
@@ -61,7 +67,7 @@ void _player::Dash()
 		if(dashSp!=0)
 		{
 			dashing = true;
-			dashingTime.restart();
+			dashingTime = 0;
 		}
 	}
 }
@@ -106,6 +112,7 @@ void _player::Move(_mapData* map)
 	{
 		if (KeyLeft.pressed())  speed.x = -sp;
 		if (KeyRight.pressed()) speed.x =  sp;
+		//if (KeyRight.down()) speed.x = 60;
 	}
 	Print << U"pos:" << pos;
 	Print << U"sp_y({})"_fmt(speed.y);
@@ -117,7 +124,7 @@ void _player::Move(_mapData* map)
 	CheckMapHit(map);
 	speed.x = 0;
 	if (pos.y >= WINDOW_Y) Init();
-	pos.x = Clamp(pos.x, 0.0, (double)WINDOW_X - size.x);
+	//pos.x = Clamp(pos.x, 0.0, (double)WINDOW_X - size.x);
 }
 //左　Hotpink
 //右　Aquamarine
@@ -155,6 +162,7 @@ void _player::CheckMapHit(_mapData* mapData)
 			{
 				hit.right = true;
 				hit.pos.x = (x * MAP_CHIPSIZE) + MAP_CHIPSIZE;
+				speed.x = hit.pos.x-pos.x;
 			}
 		}
 		//右に移動中だったら右の当たり判定
@@ -172,6 +180,7 @@ void _player::CheckMapHit(_mapData* mapData)
 			{
 				hit.left = true;
 				hit.pos.x = (x * MAP_CHIPSIZE) - size.x;
+				speed.x = hit.pos.x-pos.x;
 			}
 		}
 	}
@@ -293,7 +302,7 @@ void _player::CheckMapHit(_mapData* mapData)
 	if (hit.left || hit.right)
 	{
 		speed.x = 0;
-		dashingTime.set(2s);//1.5s以上にして次のupdateでダッシュ終了
+		dashingTime = 20;//次のupdateでダッシュ終了
 	}
 	if (hit.bottom)
 		jumpCnt = 0;

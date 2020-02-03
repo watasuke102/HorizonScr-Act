@@ -16,7 +16,8 @@ constexpr int MAP_CHIPSIZE   = 60;
 
 namespace sceneName
 {
-	const int main = 0;
+	const int title = 0;
+	const int main  = 1;
 };
 
 #include"Class.h"

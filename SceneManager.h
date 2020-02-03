@@ -1,43 +1,64 @@
-#pragma once
-//ÉVÅ[Éìä«óù
+Ôªø#pragma once
+//„Ç∑„Éº„É≥ÁÆ°ÁêÜ
+struct _sceneChange
+{
+	bool willChangeStart;
+	int nextScene;
+	void start(bool f,int next)
+	{
+		willChangeStart=f;
+		nextScene = next;
+	}
+} GL sceneChange;
 class _sceneManager
 {
 private:
 	int now = sceneName::main;
 	DynamicTexture fadePic;
 	double col = 0;
+	Stopwatch fadeDuration;
 	bool isFadeActive = false;
 	bool makePic = false;
-	//ÉVÅ[Éì
+	//„Ç∑„Éº„É≥
 	_gameMain gameMain;
 public:
-	int Now() { return now; }
 	void Change(int n)
 	{
 		ScreenCapture::RequestCurrentFrame();
 		if (n != -1) now = n;
 		isFadeActive = true;
-		col = 0;
+		fadeDuration.reset();
 	}
 	void Update()
 	{
-		//ÉVÅ[ÉìÇÃçXêV
+		//„Ç∑„Éº„É≥„ÅÆÊõ¥Êñ∞
 		switch (now)
 		{
-		case sceneName::main: gameMain.Update(); break;
+			case sceneName::main: gameMain.Update(); break;
 		}
-		//ÉtÉFÅ[ÉhÉAÉEÉgèàóù
+		//„Éï„Çß„Éº„Éâ„Ç¢„Ç¶„ÉàÂá¶ÁêÜ
 		if (isFadeActive)
 		{
-			if (col == 0)
-				ScreenCapture::GetFrame(fadePic);
-			fadePic.draw(0, 0, AlphaF(col));
-			col += 0.05;
-			if (col >= 1)
+			if (!fadeDuration.isRunning())
 			{
-				col = 0;
+				ScreenCapture::GetFrame(fadePic);
+				fadeDuration.restart();
+			}
+			fadePic.draw(0, 0, AlphaF(1.0-fadeDuration.sF()/0.5));
+			if (fadeDuration > 0.5s)
+			{
+				fadeDuration.reset();
 				isFadeActive = false;
 			}
+		}
+		//„Ç∑„Éº„É≥„ÉÅ„Çß„É≥„Ç∏ÈñãÂßã
+		if(sceneChange.willChangeStart)
+		{
+			ScreenCapture::RequestCurrentFrame();
+			if (sceneChange.nextScene != -1)
+				now = sceneChange.nextScene;
+			isFadeActive = true;
+			fadeDuration.reset();
 		}
 	}
 };
