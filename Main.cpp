@@ -1,6 +1,6 @@
 ﻿#include "main.h"
 
-void Main()
+void GameInit()
 {
 	double resize = 0.8;
 	Scene::SetBackground(ColorF(0.1));
@@ -10,6 +10,12 @@ void Main()
 	Window::Maximize();
 	Scene::Resize(WINDOW_SIZE);
 
+	FontAsset::Register(U"title", 255);
+}
+
+void Main()
+{
+	GameInit();
 	_sceneManager scene;
 	while (System::Update())
 	{

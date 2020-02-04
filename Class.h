@@ -31,7 +31,7 @@ class _player
 private:
 	Texture pic;
 	Vec2 pos, speed;
-	Size size;
+	Rect hitBox;
 	RenderTexture debugtxr;
 	bool didSpaceDown;
 	int jumpCnt, spacePressedFrame;
@@ -47,7 +47,6 @@ public:
 	void Init();
 	void Update(_mapData*);
 	void Draw();
-
 	void Dash();
 	void Jump();
 	void Move(_mapData*);

@@ -3,7 +3,7 @@
 void _player::Init()
 {
 	pos.set(480, 400);
-	size.set(60, 60);
+	hitBox.size.set(60, 60);
 	pic = Texture(Emoji(U"😇"));
 	debugtxr = RenderTexture(WINDOW_SIZE,ColorF(0.1));
 	debug = false;
@@ -23,7 +23,7 @@ void _player::Update(_mapData* map)
 {
 	//debug
 	static int upsp;
-	if (KeyD.down() && KeyAlt.down())debug = !debug;
+	if ((KeyAlt + KeyS).down())debug = !debug;
 	if(KeyUp.pressed())
 		speed.y = (KeyShift.pressed())? 2:1;
 	Jump();
@@ -32,11 +32,11 @@ void _player::Update(_mapData* map)
 }
 void _player::Draw()
 {
-	//debugtxr.draw(AlphaF(0.5));
+	debugtxr.draw(AlphaF(0.5));
 	debugtxr.clear(ColorF(0.1,0.5));
 	afterImage.update();
-	//Rect(pos.x, pos.y, size)
-	pic.resized(size).draw(pos);//,ColorF(0.3, 0.8, 0.4, 0.5));
+	//hitBox
+	pic.resized(hitBox.size).draw(pos);//,ColorF(0.3, 0.8, 0.4, 0.5));
 }
 
 void _player::Dash()
@@ -45,7 +45,7 @@ void _player::Dash()
 	if(dashing)
 	{
 		speed.set(20*dashSp, 0);
-		afterImage.add([ef_tex=pic, p = pos, ef_size = size](double t) {
+		afterImage.add([ef_tex=pic, p = pos, ef_size = hitBox.size](double t) {
 			Point ef_pos((int)p.x, (int)p.y);
 			//Rect(ef_pos, ef_size)
 			ef_tex.resized(ef_size).draw(ef_pos, AlphaF(0.5 - t/0.3));//ColorF(0.3, 0.8, 0.4, 0.5 - t/0.3));
@@ -124,7 +124,7 @@ void _player::Move(_mapData* map)
 	CheckMapHit(map);
 	speed.x = 0;
 	if (pos.y >= WINDOW_Y) Init();
-	//pos.x = Clamp(pos.x, 0.0, (double)WINDOW_X - size.x);
+	//pos.x = Clamp(pos.x, 0.0, (double)WINDOW_X - hitBox.size.x);
 }
 //左　Hotpink
 //右　Aquamarine
@@ -151,7 +151,7 @@ void _player::CheckMapHit(_mapData* mapData)
 		if (speed.x < 0)
 		{
 			x = hit.pos.x / MAP_CHIPSIZE;
-			y = (hit.pos.y + (size.y / 2)) / MAP_CHIPSIZE;
+			y = (hit.pos.y + (hitBox.size.y / 2)) / MAP_CHIPSIZE;
 			{
 				ScopedRenderTarget2D a(debugtxr);
 				if (debug)
@@ -168,8 +168,8 @@ void _player::CheckMapHit(_mapData* mapData)
 		//右に移動中だったら右の当たり判定
 		if (speed.x > 0)
 		{
-			x = (hit.pos.x + size.x) / MAP_CHIPSIZE;
-			y = (hit.pos.y + (size.y / 5)) / MAP_CHIPSIZE;
+			x = (hit.pos.x + hitBox.size.x) / MAP_CHIPSIZE;
+			y = (hit.pos.y + (hitBox.size.y / 5)) / MAP_CHIPSIZE;
 			{
 				ScopedRenderTarget2D a(debugtxr);
 				if (debug)
@@ -179,7 +179,7 @@ void _player::CheckMapHit(_mapData* mapData)
 			if (mapData->Get(y,x) != 0 && hit.pos != Vec2(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE))
 			{
 				hit.left = true;
-				hit.pos.x = (x * MAP_CHIPSIZE) - size.x;
+				hit.pos.x = (x * MAP_CHIPSIZE) - hitBox.size.x;
 				speed.x = hit.pos.x-pos.x;
 			}
 		}
@@ -194,7 +194,7 @@ void _player::CheckMapHit(_mapData* mapData)
 			if ((int)hit.pos.x % MAP_CHIPSIZE == 0)
 			{
 				//真下
-				x = (hit.pos.x + (size.x / 2)) / MAP_CHIPSIZE;
+				x = (hit.pos.x + (hitBox.size.x / 2)) / MAP_CHIPSIZE;
 				y = hit.pos.y / MAP_CHIPSIZE;
 				{
 					ScopedRenderTarget2D a(debugtxr);
@@ -205,13 +205,13 @@ void _player::CheckMapHit(_mapData* mapData)
 				if (mapData->Get(y,x) != 0)
 				{
 					hit.top = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - size.y;
+					hit.pos.y = (y * MAP_CHIPSIZE) - hitBox.size.y;
 				}
 			}
 			else
 			{
 				//左上
-				x = (hit.pos.x + size.x) / MAP_CHIPSIZE;
+				x = (hit.pos.x + hitBox.size.x) / MAP_CHIPSIZE;
 				y = hit.pos.y / MAP_CHIPSIZE;
 				{
 					ScopedRenderTarget2D a(debugtxr);
@@ -247,8 +247,8 @@ void _player::CheckMapHit(_mapData* mapData)
 			if ((int)hit.pos.x % MAP_CHIPSIZE == 0)
 			{
 				//真下
-				x = (hit.pos.x + (size.x / 2)) / MAP_CHIPSIZE;
-				y = (hit.pos.y + size.y) / MAP_CHIPSIZE;
+				x = (hit.pos.x + (hitBox.size.x / 2)) / MAP_CHIPSIZE;
+				y = (hit.pos.y + hitBox.size.y) / MAP_CHIPSIZE;
 				{
 					ScopedRenderTarget2D a(debugtxr);
 					if (debug)
@@ -258,14 +258,14 @@ void _player::CheckMapHit(_mapData* mapData)
 				if (mapData->Get(y,x) != 0)
 				{
 					hit.bottom = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - size.y;
+					hit.pos.y = (y * MAP_CHIPSIZE) - hitBox.size.y;
 				}
 			}
 			else
 			{
 				//左下
-				x = (hit.pos.x + size.x) / MAP_CHIPSIZE;
-				y = (hit.pos.y + size.y) / MAP_CHIPSIZE;
+				x = (hit.pos.x + hitBox.size.x) / MAP_CHIPSIZE;
+				y = (hit.pos.y + hitBox.size.y) / MAP_CHIPSIZE;
 				{
 					ScopedRenderTarget2D a(debugtxr);
 					if (debug)
@@ -275,11 +275,11 @@ void _player::CheckMapHit(_mapData* mapData)
 				if (mapData->Get(y,x) != 0)
 				{
 					hit.bottom = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - size.y;
+					hit.pos.y = (y * MAP_CHIPSIZE) - hitBox.size.y;
 				}
 				//右下
 				x = hit.pos.x / MAP_CHIPSIZE;
-				y = (hit.pos.y + size.y) / MAP_CHIPSIZE;
+				y = (hit.pos.y + hitBox.size.y) / MAP_CHIPSIZE;
 				{
 					ScopedRenderTarget2D a(debugtxr);
 					if (debug)
@@ -289,7 +289,7 @@ void _player::CheckMapHit(_mapData* mapData)
 				if (mapData->Get(y,x) != 0)
 				{
 					hit.bottom = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - size.y;
+					hit.pos.y = (y * MAP_CHIPSIZE) - hitBox.size.y;
 				}
 			}
 		}

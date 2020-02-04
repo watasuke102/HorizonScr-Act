@@ -1,24 +1,14 @@
 ﻿#pragma once
 
-class scene
-{
-public:
-	scene() { Init(); }
-	virtual void Init();
-	virtual void Update();
-	virtual void Draw();
-};
-
 class _title
 {
 public:
 	_title() { Init(); }
 	void Init();
-	void Update()
-	{
-	}
+	void Update();
 	void Draw();
 };
+
 class _gameMain
 {
 private:

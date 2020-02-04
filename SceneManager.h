@@ -4,22 +4,24 @@ struct _sceneChange
 {
 	bool willChangeStart;
 	int nextScene;
-	void start(bool f,int next)
+	void Start(int next)
 	{
-		willChangeStart=f;
+		ScreenCapture::RequestCurrentFrame();
+		willChangeStart=true;
 		nextScene = next;
 	}
 } GL sceneChange;
 class _sceneManager
 {
 private:
-	int now = sceneName::main;
+	int now = sceneName::title;
 	DynamicTexture fadePic;
-	double col = 0;
 	Stopwatch fadeDuration;
+	double col = 0;
 	bool isFadeActive = false;
 	bool makePic = false;
 	//シーン
+	_title title;
 	_gameMain gameMain;
 public:
 	void Change(int n)
@@ -34,7 +36,14 @@ public:
 		//シーンの更新
 		switch (now)
 		{
+			case sceneName::title:   title.Update(); break;
 			case sceneName::main: gameMain.Update(); break;
+		}
+		//シーンの描画
+		switch (now)
+		{
+			case sceneName::title:   title.Draw(); break;
+			case sceneName::main: gameMain.Draw(); break;
 		}
 		//フェードアウト処理
 		if (isFadeActive)
@@ -44,7 +53,7 @@ public:
 				ScreenCapture::GetFrame(fadePic);
 				fadeDuration.restart();
 			}
-			fadePic.draw(0, 0, AlphaF(1.0-fadeDuration.sF()/0.5));
+			fadePic.draw(0, 0, AlphaF(1.0 - fadeDuration.sF()/0.5));
 			if (fadeDuration > 0.5s)
 			{
 				fadeDuration.reset();
@@ -54,10 +63,10 @@ public:
 		//シーンチェンジ開始
 		if(sceneChange.willChangeStart)
 		{
-			ScreenCapture::RequestCurrentFrame();
-			if (sceneChange.nextScene != -1)
-				now = sceneChange.nextScene;
 			isFadeActive = true;
+			sceneChange.willChangeStart=false;
+			now = sceneChange.nextScene;
+			ScreenCapture::RequestCurrentFrame();
 			fadeDuration.reset();
 		}
 	}

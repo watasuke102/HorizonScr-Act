@@ -37,7 +37,6 @@ void _gameMain::Update()
 		player.Update(&mapData);
 	if(KeyM.down())
 		stp = !stp;
-	Draw();
 }
 
 void _gameMain::Draw()
