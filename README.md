@@ -10,9 +10,9 @@
 未定　どころか開発中止になるかも
 
 ## プレイしてみたい
-1.右上の緑色になってる "Clone or download" をクリック  
-2.”Download ZIP”を選択  
-3.ダウンロードしたzipを展開し、中にあるAppフォルダ内のAction(debug).exe　みたいな名前のやつをクリック　で遊べます
+1. 右上の緑色になってる "Clone or download" をクリック
+2. ”Download ZIP”を選択
+3. ダウンロードしたzipを展開し、中にあるAppフォルダ内のAction(debug).exe　みたいな名前のやつをクリック　で遊べます
 
 
 
