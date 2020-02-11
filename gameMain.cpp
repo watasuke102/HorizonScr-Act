@@ -14,19 +14,6 @@ void _gameMain::Init()
 	}
 
 	player.Init();
-
-	String dev,out;
-	for (auto y : step(mapData.Height()))
-	{
-		dev.clear();
-		for (auto x : step(mapData.Width()))
-			dev += U"{},"_fmt(mapData.Get(y, x));
-		out +=(U"{"+dev+U"} ,\n");
-	}
-	TextWriter t(U"CSV.txt");
-	t.writeln(out);
-	t.close();
-
 	MapDraw();
 }
 void _gameMain::Update()

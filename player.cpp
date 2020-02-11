@@ -4,7 +4,7 @@ void _player::Init()
 {
 	pos.set(480, 400);
 	hitBox.size.set(60, 60);
-	pic = Texture(Emoji(U"😇"));
+	pic = Texture(Emoji(U"🍎"));
 	debugtxr = RenderTexture(WINDOW_SIZE,ColorF(0.1));
 	debug = false;
 	didSpaceDown = false;
@@ -23,7 +23,7 @@ void _player::Update(_mapData* map)
 {
 	//debug
 	static int upsp;
-	if ((KeyAlt + KeyS).down())debug = !debug;
+	if ((KeyAlt + KeyS).down()) debug = !debug;
 	if(KeyUp.pressed())
 		speed.y = (KeyShift.pressed())? 2:1;
 	Jump();
@@ -35,10 +35,39 @@ void _player::Draw()
 	debugtxr.draw(AlphaF(0.5));
 	debugtxr.clear(ColorF(0.1,0.5));
 	afterImage.update();
-	//hitBox
-	pic.resized(hitBox.size).draw(pos);//,ColorF(0.3, 0.8, 0.4, 0.5));
+	//hitBox.draw(pos, ColorF(0.3, 0.8, 0.4, 0.5));
+	pic.resized(hitBox.size).draw(pos);
 }
 
+void _player::Jump()
+{
+	Print << U"{}(JumpCnt)"_fmt(jumpCnt);
+	if (KeySpace.pressed())
+	{
+		//すでに二弾ジャンプしていない、かつ押された瞬間なら
+		if (!didSpaceDown)
+		{
+			if(jumpCnt < 2)
+			{
+				speed.y = 0;
+				spacePressedFrame = 0;
+				didSpaceDown = true;
+			}
+		}else //押され続けていたら
+		{
+			spacePressedFrame++;
+			if (spacePressedFrame < 13)
+				speed.y = JUMP_POWER;
+		}
+	}
+	else
+	{
+		if (didSpaceDown)
+			jumpCnt++;
+		spacePressedFrame = 0;
+		didSpaceDown = false;
+	}
+}
 void _player::Dash()
 {
 	//ダッシュ中なら更新する
@@ -71,35 +100,6 @@ void _player::Dash()
 		}
 	}
 }
-void _player::Jump()
-{
-	Print << U"{}(JumpCnt)"_fmt(jumpCnt);
-	if (KeySpace.pressed())
-	{
-		//すでに二弾ジャンプしていない、かつ押された瞬間なら
-		if (!didSpaceDown)
-		{
-			if(jumpCnt < 2)
-			{
-				speed.y = 0;
-				spacePressedFrame = 0;
-				didSpaceDown = true;
-			}
-		}else //押され続けていたら
-		{
-			spacePressedFrame++;
-			if (spacePressedFrame < 13)
-				speed.y = JUMP_POWER;
-		}
-	}
-	else
-	{
-		if (didSpaceDown)
-			jumpCnt++;
-		spacePressedFrame = 0;
-		didSpaceDown = false;
-	}
-}
 void _player::Move(_mapData* map)
 {
 	int sp;
@@ -112,7 +112,6 @@ void _player::Move(_mapData* map)
 	{
 		if (KeyLeft.pressed())  speed.x = -sp;
 		if (KeyRight.pressed()) speed.x =  sp;
-		//if (KeyRight.down()) speed.x = 60;
 	}
 	Print << U"pos:" << pos;
 	Print << U"sp_y({})"_fmt(speed.y);
@@ -124,7 +123,6 @@ void _player::Move(_mapData* map)
 	CheckMapHit(map);
 	speed.x = 0;
 	if (pos.y >= WINDOW_Y) Init();
-	//pos.x = Clamp(pos.x, 0.0, (double)WINDOW_X - hitBox.size.x);
 }
 //左　Hotpink
 //右　Aquamarine
@@ -295,8 +293,8 @@ void _player::CheckMapHit(_mapData* mapData)
 		}
 	}
 
-	//当たり判定
-
+	if (hit.bottom)
+		jumpCnt = 0;
 	if (hit.top || hit.bottom)
 		speed.y = 0;
 	if (hit.left || hit.right)
@@ -304,8 +302,7 @@ void _player::CheckMapHit(_mapData* mapData)
 		speed.x = 0;
 		dashingTime = 20;//次のupdateでダッシュ終了
 	}
-	if (hit.bottom)
-		jumpCnt = 0;
+
 	hit.pos.x += scr;
 	pos = hit.pos;
 	scr -= speed.x;

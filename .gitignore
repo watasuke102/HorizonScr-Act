@@ -1,6 +1,13 @@
 .vscode/
 .vs/
 Intermediate/
-App/
-!/App/Data/
-!/App/*.exe
+
+#App-Folder
+App/AS_DEBUG
+App/engine
+App/example
+App/nlp
+App/Action(debug)_log.html
+App/icon.ico
+App/Resource.rc
+App/Screenshot

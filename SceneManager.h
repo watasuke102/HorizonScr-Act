@@ -14,7 +14,7 @@ struct _sceneChange
 class _sceneManager
 {
 private:
-	int now = sceneName::title;
+	int now = sceneName::main;
 	DynamicTexture fadePic;
 	Stopwatch fadeDuration;
 	double col = 0;
