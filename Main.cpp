@@ -11,6 +11,8 @@ void GameInit()
 	Scene::Resize(WINDOW_SIZE);
 
 	FontAsset::Register(U"title", 255);
+	FontAsset::Register(U"FPS", 20);
+	FontAsset::Register(U"score", 25);
 }
 
 void Main()
@@ -26,6 +28,22 @@ void Main()
 			while(t < 1s);
 		}
 		ClearPrint();
+		Print <<U"\n\n\n\n";
 		scene.Update();
 	}
+}
+
+
+//3桁ごとにカンマで区切る
+String SeparateString(String num)
+{
+	int length = num.length();
+	String result;
+	for (auto i:step(length))
+	{
+		result += num[(length-1)-i];
+		if ((i+1)%3 == 0 && (i+1) != length && (i+1) != 0)
+			result += U',';
+	}
+	return result.reverse();
 }

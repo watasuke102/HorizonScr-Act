@@ -4,6 +4,8 @@
 #include <time.h>
 #define GL __declspec(selectany)
 
+extern String SeparateString(String);
+
 constexpr int WINDOW_X = 1920;
 constexpr int WINDOW_Y = 1080;
 constexpr Size WINDOW_SIZE(WINDOW_X,WINDOW_Y);

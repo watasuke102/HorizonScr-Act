@@ -15,6 +15,7 @@ private:
 	_player player;
 	_mapData mapData;
 	RenderTexture map;
+	Stopwatch stageElapsedTime;
 public:
 	_gameMain() { Init(); }
 	void Init();
