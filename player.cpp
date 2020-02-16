@@ -21,6 +21,7 @@ void _player::Init()
 
 void _player::Update(_mapData* map)
 {
+	map->SetScr(scr);
 	//debug
 	static int upsp;
 	if ((KeyAlt + KeyS).down()) debug = !debug;
@@ -35,7 +36,6 @@ void _player::Draw()
 	debugtxr.draw(AlphaF(0.5));
 	debugtxr.clear(ColorF(0.1,0.5));
 	afterImage.update();
-	//hitBox.draw(pos, ColorF(0.3, 0.8, 0.4, 0.5));
 	pic.resized(hitBox.size).draw(pos);
 }
 
@@ -120,178 +120,7 @@ void _player::Move(_mapData* map)
 	//縦移動
 	pos.y -= speed.y;
 	speed.y--;
-	CheckMapHit(map);
-	speed.x = 0;
-	if (pos.y >= WINDOW_Y) Init();
-}
-//左　Hotpink
-//右　Aquamarine
-//上　Purple
-//下　Yellow
-void _player::CheckMapHit(_mapData* mapData)
-{
-	int x, y;
-	//プレイヤーの衝突位置と次移動すべき位置
-	struct _hit
-	{
-		bool top, bottom, left, right;
-		Vec2 pos;
-	}hit;
-	hit.top = false;
-	hit.bottom = false;
-	hit.left = false;
-	hit.right = false;
-	hit.pos = pos;
-	hit.pos.x -= scr;
-	//横方向の当たり判定
-	{
-		//左に移動中だったら左の当たり判定
-		if (speed.x < 0)
-		{
-			x = hit.pos.x / MAP_CHIPSIZE;
-			y = (hit.pos.y + (hitBox.size.y / 2)) / MAP_CHIPSIZE;
-			{
-				ScopedRenderTarget2D a(debugtxr);
-				if (debug)
-					Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-					.draw(Palette::Hotpink);
-			}
-			if (mapData->Get(y,x) != 0 && hit.pos != Vec2(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE))
-			{
-				hit.right = true;
-				hit.pos.x = (x * MAP_CHIPSIZE) + MAP_CHIPSIZE;
-				speed.x = hit.pos.x-pos.x;
-			}
-		}
-		//右に移動中だったら右の当たり判定
-		if (speed.x > 0)
-		{
-			x = (hit.pos.x + hitBox.size.x) / MAP_CHIPSIZE;
-			y = (hit.pos.y + (hitBox.size.y / 5)) / MAP_CHIPSIZE;
-			{
-				ScopedRenderTarget2D a(debugtxr);
-				if (debug)
-					Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-					.draw(Palette::Aquamarine);
-			}
-			if (mapData->Get(y,x) != 0 && hit.pos != Vec2(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE))
-			{
-				hit.left = true;
-				hit.pos.x = (x * MAP_CHIPSIZE) - hitBox.size.x;
-				speed.x = hit.pos.x-pos.x;
-			}
-		}
-	}
-	//縦方向の当たり判定
-	{
-		//上：上昇中だったら上の当たり判定
-		if (speed.y > 0)
-		{
-			//マップチップの境目にいないなら
-			if ((int)hit.pos.x % MAP_CHIPSIZE == 0)
-			{
-				//真上
-				x = (hit.pos.x + (hitBox.size.x / 2)) / MAP_CHIPSIZE;
-				y = hit.pos.y / MAP_CHIPSIZE;
-				{
-					ScopedRenderTarget2D a(debugtxr);
-					if (debug)
-						Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-						.draw(Palette::Purple);
-				}
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.top = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) + MAP_CHIPSIZE;
-				}
-			}
-			else
-			{
-				//左上
-				x = (hit.pos.x + hitBox.size.x) / MAP_CHIPSIZE;
-				y = hit.pos.y / MAP_CHIPSIZE;
-				{
-					ScopedRenderTarget2D a(debugtxr);
-					if (debug)
-						Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-						.draw(Palette::Purple);
-				}
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.top = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) + MAP_CHIPSIZE;
-				}
-				//右上
-				x = hit.pos.x / MAP_CHIPSIZE;
-				y = hit.pos.y / MAP_CHIPSIZE;
-				{
-					ScopedRenderTarget2D a(debugtxr);
-					if (debug)
-						Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-						.draw(Palette::Purple);
-				}
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.top = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) + MAP_CHIPSIZE;
-				}
-			}
-		}
-		//下：落下中だったら下の当たり判定
-		if (speed.y < 0)
-		{
-			//マップチップの境目にいないなら
-			if ((int)hit.pos.x % MAP_CHIPSIZE == 0)
-			{
-				//真下
-				x = (hit.pos.x + (hitBox.size.x / 2)) / MAP_CHIPSIZE;
-				y = (hit.pos.y + hitBox.size.y) / MAP_CHIPSIZE;
-				{
-					ScopedRenderTarget2D a(debugtxr);
-					if (debug)
-						Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-						.draw(Palette::Yellow);
-				}
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.bottom = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - hitBox.size.y;
-				}
-			}
-			else
-			{
-				//左下
-				x = (hit.pos.x + hitBox.size.x) / MAP_CHIPSIZE;
-				y = (hit.pos.y + hitBox.size.y) / MAP_CHIPSIZE;
-				{
-					ScopedRenderTarget2D a(debugtxr);
-					if (debug)
-						Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-						.draw(Palette::Yellow);
-				}
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.bottom = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - hitBox.size.y;
-				}
-				//右下
-				x = hit.pos.x / MAP_CHIPSIZE;
-				y = (hit.pos.y + hitBox.size.y) / MAP_CHIPSIZE;
-				{
-					ScopedRenderTarget2D a(debugtxr);
-					if (debug)
-						Rect(x * MAP_CHIPSIZE, y * MAP_CHIPSIZE, MAP_CHIPSIZE, MAP_CHIPSIZE)
-						.draw(Palette::Yellow);
-				}
-				if (mapData->Get(y,x) != 0)
-				{
-					hit.bottom = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - hitBox.size.y;
-				}
-			}
-		}
-	}
-
+	_mapHitState hit=CheckMapHit(map,pos,hitBox,speed);
 	if (hit.bottom)
 		jumpCnt = 0;
 	if (hit.top || hit.bottom)
@@ -306,4 +135,6 @@ void _player::CheckMapHit(_mapData* mapData)
 	pos = hit.pos;
 	scr -= speed.x;
 	if (scr > 0) scr = 0;
+	speed.x = 0;
+	if (pos.y >= WINDOW_Y) Init();
 }

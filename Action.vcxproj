@@ -230,12 +230,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CheckMapHit.h" />
     <ClInclude Include="Class.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="function.cpp" />
     <ClCompile Include="gameMain.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="player.cpp" />

@@ -4,7 +4,6 @@
 #include <time.h>
 #define GL __declspec(selectany)
 
-extern String SeparateString(String);
 
 constexpr int WINDOW_X = 1920;
 constexpr int WINDOW_Y = 1080;
@@ -21,7 +20,17 @@ namespace sceneName
 	const int title = 0;
 	const int main  = 1;
 };
+typedef struct
+{
+	bool top, bottom, left, right;
+	Vec2 pos;
+}_mapHitState;
 
 #include"Class.h"
 #include"Scene.h"
 #include"SceneManager.h"
+//#include"CheckMapHit.h"
+
+
+extern String SeparateString(String);
+extern _mapHitState CheckMapHit(_mapData*, Vec2, Rect, Vec2);

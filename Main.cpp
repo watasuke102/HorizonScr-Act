@@ -32,18 +32,3 @@ void Main()
 		scene.Update();
 	}
 }
-
-
-//3桁ごとにカンマで区切る
-String SeparateString(String num)
-{
-	int length = num.length();
-	String result;
-	for (auto i:step(length))
-	{
-		result += num[(length-1)-i];
-		if ((i+1)%3 == 0 && (i+1) != length && (i+1) != 0)
-			result += U',';
-	}
-	return result.reverse();
-}

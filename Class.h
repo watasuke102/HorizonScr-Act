@@ -5,12 +5,17 @@ class _mapData
 {
 private:
 	Grid<int> map;
+	int scr;
+
 public:
 	_mapData() { Init(0, 0); }
 	void Init(int i,int j){ map = Grid<int>(i, j, 0); }
 	int Width() { return map.width(); }
 	int Height() { return map.height(); }
-	int Sizeget() { return map.size_bytes(); }
+	int SizeGet() { return map.size_bytes(); }
+	int GetScr() { return scr; }
+
+	void SetScr(int a){ scr=a; }
 	void Set(int y, int x, int n)
 	{
 		if (y<0 || y>map.height() || x<0 || x>map.width())
@@ -50,7 +55,7 @@ public:
 	void Dash();
 	void Jump();
 	void Move(_mapData*);
-	void CheckMapHit(_mapData*);
+	//void CheckMapHit(_mapData*);
 	int GetScr() { return scr; }
 };
 
