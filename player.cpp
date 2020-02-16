@@ -187,11 +187,10 @@ void _player::CheckMapHit(_mapData* mapData)
 		//上：上昇中だったら上の当たり判定
 		if (speed.y > 0)
 		{
-			//FIXME:speed.y>1のときに上方向にすり抜ける
 			//マップチップの境目にいないなら
 			if ((int)hit.pos.x % MAP_CHIPSIZE == 0)
 			{
-				//真下
+				//真上
 				x = (hit.pos.x + (hitBox.size.x / 2)) / MAP_CHIPSIZE;
 				y = hit.pos.y / MAP_CHIPSIZE;
 				{
@@ -203,7 +202,7 @@ void _player::CheckMapHit(_mapData* mapData)
 				if (mapData->Get(y,x) != 0)
 				{
 					hit.top = true;
-					hit.pos.y = (y * MAP_CHIPSIZE) - hitBox.size.y;
+					hit.pos.y = (y * MAP_CHIPSIZE) + MAP_CHIPSIZE;
 				}
 			}
 			else
