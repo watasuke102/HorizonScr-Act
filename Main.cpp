@@ -10,6 +10,8 @@ void GameInit()
 	Window::Maximize();
 	Scene::Resize(WINDOW_SIZE);
 
+	TextureAsset::Register(U"player", U"Data/moekyara.png");
+
 	FontAsset::Register(U"title", 255);
 	FontAsset::Register(U"FPS", 20);
 	FontAsset::Register(U"score", 25);

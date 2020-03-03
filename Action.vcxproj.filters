@@ -361,6 +361,8 @@
       <Filter>Resource Files\example\config</Filter>
     </Xml>
   </ItemGroup>
+
+
   <ItemGroup>
     <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
@@ -378,21 +380,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+
   <ItemGroup>
-    <ClCompile Include="gameMain.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="gameMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Title.cpp">
+    <ClCompile Include="title.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="function.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+
+
   </ItemGroup>
 </Project>

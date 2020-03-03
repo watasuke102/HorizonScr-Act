@@ -13,6 +13,8 @@ class _gameMain
 {
 private:
 	_player player;
+	_enemy enemy;
+
 	_mapData mapData;
 	RenderTexture map;
 	Stopwatch stageElapsedTime;

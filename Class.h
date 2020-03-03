@@ -34,13 +34,14 @@ public:
 class _player
 {
 private:
+	//描画用ステータス
 	Texture pic;
 	Vec2 pos, speed;
-	Rect hitBox;
-	RenderTexture debugtxr;
+	RectF hitBox;
+	int scr;
+	//ジャンプ
 	bool didSpaceDown;
 	int jumpCnt, spacePressedFrame;
-	int scr;
 	//ダッシュ
 	Effect afterImage;
 	int dashingTime;
@@ -55,16 +56,18 @@ public:
 	void Dash();
 	void Jump();
 	void Move(_mapData*);
-	//void CheckMapHit(_mapData*);
 	int GetScr() { return scr; }
 };
 
-class enemy
+class _enemy
 {
 private:
 	Vec2 pos;
+	Vec2 speed;
+	RectF hitBox;
 public:
 	void Init();
-	void Update();
+	void Update(_mapData*);
 	void Draw();
 };
+

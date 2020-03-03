@@ -14,6 +14,7 @@ void _gameMain::Init()
 	}
 
 	player.Init();
+	enemy.Init();
 	MapDraw();
 	stageElapsedTime.restart();
 }
@@ -21,18 +22,17 @@ void _gameMain::Update()
 {
 	static bool stp = false;
 	if (KeyF5.down()) Init();
-	if(!stp)
-		player.Update(&mapData);
+	if(!stp) player.Update(&mapData);
+	enemy.Update(&mapData);
 	if(KeyM.down())
 		stp = !stp;
 }
-
-
 void _gameMain::Draw()
 {
 	Print << U"scr({})"_fmt(player.GetScr());
 	map.draw(player.GetScr(), 0);
 	player.Draw();
+	enemy.Draw();
 	//UI
 	Rect(50, 50, 400  , 50).shearedX(10).draw(Palette::Gray);
 	Rect(50, 50, 400/4, 50).shearedX(10).draw(ColorF(0.9,0.15,0.1));
@@ -40,6 +40,8 @@ void _gameMain::Draw()
 	FontAsset(U"score")(U"TIME:{}   SCORE:{}"_fmt(stageElapsedTime, SeparateString(score))).draw(0, 0);
 	FontAsset(U"FPS")( U"FPS[{:0>2}]"_fmt(Profiler::FPS()) ).draw(Arg::bottomRight(WINDOW_X, WINDOW_Y));
 }
+
+
 void _gameMain::MapDraw()
 {
 	Size mapSize(mapData.Width() * MAP_CHIPSIZE, mapData.Height() * MAP_CHIPSIZE);

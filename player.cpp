@@ -4,8 +4,7 @@ void _player::Init()
 {
 	pos.set(480, 400);
 	hitBox.size.set(60, 60);
-	pic = Texture(Emoji(U"🍎"));
-	debugtxr = RenderTexture(WINDOW_SIZE,ColorF(0.1));
+	pic = TextureAsset(U"player");//Texture(Emoji(U"🍎"));
 	debug = false;
 	didSpaceDown = false;
 	scr = 0;
@@ -33,8 +32,6 @@ void _player::Update(_mapData* map)
 }
 void _player::Draw()
 {
-	debugtxr.draw(AlphaF(0.5));
-	debugtxr.clear(ColorF(0.1,0.5));
 	afterImage.update();
 	pic.resized(hitBox.size).draw(pos);
 }
