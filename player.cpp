@@ -3,6 +3,7 @@
 void _player::Init()
 {
 	pos.set(480, 400);
+	drawPos.set(480, 400);
 	hitBox.size.set(60, 60);
 	pic = TextureAsset(U"player");//Texture(Emoji(U"🍎"));
 	debug = false;
@@ -32,8 +33,15 @@ void _player::Update(_mapData* map)
 }
 void _player::Draw()
 {
+	drawPos.y = pos.y;
 	afterImage.update();
-	pic.resized(hitBox.size).draw(pos);
+	pic.resized(hitBox.size).draw(drawPos);
+}
+
+void _player::DebugDraw()
+{
+	//当たり判定が行われている場所を描画
+	RectF(pos, hitBox.size).draw(ColorF(0.3, 0.8, 0.4, 0.5));
 }
 
 void _player::Jump()
@@ -71,7 +79,7 @@ void _player::Dash()
 	if(dashing)
 	{
 		speed.set(20*dashSp, 0);
-		afterImage.add([ef_tex=pic, p = pos, ef_size = hitBox.size](double t) {
+		afterImage.add([ef_tex=pic, p = drawPos, ef_size = hitBox.size](double t) {
 			Point ef_pos((int)p.x, (int)p.y);
 			//Rect(ef_pos, ef_size)
 			ef_tex.resized(ef_size).draw(ef_pos, AlphaF(0.5 - t/0.3));//ColorF(0.3, 0.8, 0.4, 0.5 - t/0.3));
@@ -111,6 +119,7 @@ void _player::Move(_mapData* map)
 		if (KeyRight.pressed()) speed.x =  sp;
 	}
 	Print << U"pos:" << pos;
+	Print << U"drawPos:" << drawPos;
 	Print << U"sp_y({})"_fmt(speed.y);
 	//横移動
 	pos.x += speed.x;
@@ -128,10 +137,11 @@ void _player::Move(_mapData* map)
 		dashingTime = 20;//次のupdateでダッシュ終了
 	}
 
+	map->SetPlayerSpeed(speed);
 	hit.pos.x += scr;
 	pos = hit.pos;
 	scr -= speed.x;
-	if (scr > 0) scr = 0;
+	scr = Clamp(scr, WINDOW_X-(map->Width() * MAP_CHIPSIZE) , 0);
 	speed.x = 0;
 	if (pos.y >= WINDOW_Y) Init();
 }

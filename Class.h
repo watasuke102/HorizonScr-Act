@@ -5,6 +5,7 @@ class _mapData
 {
 private:
 	Grid<int> map;
+	Vec2 playersp;
 	int scr;
 
 public:
@@ -14,8 +15,10 @@ public:
 	int Height() { return map.height(); }
 	int SizeGet() { return map.size_bytes(); }
 	int GetScr() { return scr; }
+	Vec2 GetPlayerSpeed() { return playersp; }
 
 	void SetScr(int a){ scr=a; }
+	void SetPlayerSpeed(Vec2 a) { playersp = a; }
 	void Set(int y, int x, int n)
 	{
 		if (y<0 || y>map.height() || x<0 || x>map.width())
@@ -36,7 +39,7 @@ class _player
 private:
 	//描画用ステータス
 	Texture pic;
-	Vec2 pos, speed;
+	Vec2 pos, drawPos, speed;
 	RectF hitBox;
 	int scr;
 	//ジャンプ
@@ -53,6 +56,8 @@ public:
 	void Init();
 	void Update(_mapData*);
 	void Draw();
+	void DebugDraw();
+
 	void Dash();
 	void Jump();
 	void Move(_mapData*);

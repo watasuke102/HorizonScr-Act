@@ -39,6 +39,8 @@ void _gameMain::Draw()
 	String score = U"{:0>12}"_fmt(U"123456789");
 	FontAsset(U"score")(U"TIME:{}   SCORE:{}"_fmt(stageElapsedTime, SeparateString(score))).draw(0, 0);
 	FontAsset(U"FPS")( U"FPS[{:0>2}]"_fmt(Profiler::FPS()) ).draw(Arg::bottomRight(WINDOW_X, WINDOW_Y));
+
+	player.DebugDraw();
 }
 
 
